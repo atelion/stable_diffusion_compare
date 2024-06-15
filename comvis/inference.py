@@ -1,9 +1,8 @@
+import time
 from diffusers import StableDiffusionPipeline
 import torch
 import ImageReward as RM
 from PIL import Image
-import time
-
 def upscale_image(input_image, scale_factor):
     """
     Increases the resolution of an image by the given scale factor.
@@ -21,19 +20,22 @@ def upscale_image(input_image, scale_factor):
     return upscaled_image
 
 scoring_model = RM.load("ImageReward-v1.0")
-model_id = "runwayml/stable-diffusion-v1-5"
+model_id = "CompVis/stable-diffusion-v1-4"
 pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
 pipe = pipe.to("cuda")
 
 # prompt = "A medieval castle surrounded by a moat with dragons flying overhead."
 # prompt = "A serene forest with ancient trees and a carpet of bluebells."
-prompt = "A bustling farmers market during a vibrant autumn afternoon."
+# prompt = "A bustling 1950s diner scene with Elvis Presley ordering a burger."
+prompt = "A futuristic cityscape bathed in the multicolored lights of neon signs and holograms."
 
-
+start_time = time.time()
 for idx in range(8):
-    images = pipe(prompt, num_inference_steps=35).images
-    images[0] = upscale_image(images[0], 2)
-
+    images = pipe(prompt, num_inference_steps=35, height=1024, width=1024).images
+    # images = pipe(prompt, num_inference_steps=35).images
+    # images[0] = upscale_image(images[0], 2)
     # images[0].save(f"{idx}-{prompt}.png")
     score = scoring_model.score(prompt, images)
     print(score)
+end_time = time.time()
+print(f"{end_time-start_time}")

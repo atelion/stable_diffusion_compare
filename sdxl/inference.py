@@ -1,4 +1,4 @@
-from diffusers import StableDiffusionPipeline
+from diffusers import DiffusionPipeline
 import torch
 import ImageReward as RM
 from PIL import Image
@@ -21,19 +21,34 @@ def upscale_image(input_image, scale_factor):
     return upscaled_image
 
 scoring_model = RM.load("ImageReward-v1.0")
-model_id = "runwayml/stable-diffusion-v1-5"
-pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)
-pipe = pipe.to("cuda")
+
+pipe = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, use_safetensors=True, variant="fp16")
+pipe.to("cuda")
 
 # prompt = "A medieval castle surrounded by a moat with dragons flying overhead."
 # prompt = "A serene forest with ancient trees and a carpet of bluebells."
-prompt = "A bustling farmers market during a vibrant autumn afternoon."
+# prompt = "A bustling 1950s diner scene with Elvis Presley ordering a burger."
+prompt = "A futuristic cityscape bathed in the multicolored lights of neon signs and holograms."
+print(prompt)
 
-
+start_time = time.time()
+top_score = -3
+top_images = None
 for idx in range(8):
-    images = pipe(prompt, num_inference_steps=35).images
+    # Note: Full size
+    # images = pipe(prompt, num_inference_steps=35).images
+
+    # Note: Half size
+    images = pipe(prompt, num_inference_steps=50, height=512, width=512).images
     images[0] = upscale_image(images[0], 2)
 
     # images[0].save(f"{idx}-{prompt}.png")
     score = scoring_model.score(prompt, images)
+    if top_score < score:
+        top_score = score
+        top_images = images    
     print(score)
+end_time = time.time()
+print(f"{end_time - start_time} seconds")
+print(top_score)
+top_images[0].save(f"{top_score}.png")
