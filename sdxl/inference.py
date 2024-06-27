@@ -25,7 +25,7 @@ scoring_model = RM.load("ImageReward-v1.0")
 pipe = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, use_safetensors=True, variant="fp16")
 pipe.to("cuda")
 
-prompt = "A mischievous goblin finds a shiny, magical stone on a farm, causing the crops to grow disproportionately large overnight."
+prompt = "A happy owl, perched delicately on a rusty farm tool, watches the dazzling sun cast long shadows over a quiet, bustling farm."
 
 
 

@@ -29,13 +29,9 @@ def upscale_image(input_image, scale_factor):
 scoring_model = RM.load("ImageReward-v1.0")
 
 pipe = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, use_safetensors=True, variant="fp16")
-
-_pipe = pipe
-
-_pipe.load_lora_weights("checkpoint-5000", weight_name="pytorch_lora_weights.safetensors", adapter_name="dpo-lora")
-_pipe.set_adapters(["dpo-lora"], adapter_weights=[0.9])
-# print(pipe)
-_pipe.to("cuda")
+pipe.load_lora_weights("checkpoint-5000", weight_name="pytorch_lora_weights.safetensors", adapter_name="dpo-lora")
+pipe.set_adapters(["dpo-lora"], adapter_weights=[0.9])
+pipe.to("cuda")
 
 # t2i_model = AutoPipelineForText2Image.from_pretrained(
 #             "stabilityai/stable-diffusion-xl-base-1.0",
@@ -53,7 +49,7 @@ _pipe.to("cuda")
 # t2i_model.to("cuda")
 
 
-prompt = "A mischievous goblin finds a shiny, magical stone on a farm, causing the crops to grow disproportionately large overnight."
+prompt = "A vibrant, colorful turtle carrying a mystical, glowing map on its shell, navigating through a labyrinth-like cave."
 
 
 
@@ -63,9 +59,9 @@ print(prompt)
 start_time = time.time()
 top_score = -3
 top_images = None
-for idx in range(2):
+for idx in range(6):
     # Note: Full size
-    images = _pipe(prompt, num_inference_steps=35).images
+    images = pipe(prompt, num_inference_steps=35).images
     # images = t2i_model(prompt, num_inference_steps=35).images
 
     # Note: Half size
