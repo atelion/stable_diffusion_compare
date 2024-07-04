@@ -1,0 +1,6 @@
+diffusers
+clip
+peft
+transformers
+image-reward
+
