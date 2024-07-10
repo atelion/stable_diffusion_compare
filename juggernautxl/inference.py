@@ -25,7 +25,7 @@ scoring_model = RM.load("ImageReward-v1.0")
 pipe = DiffusionPipeline.from_pretrained("RunDiffusion/Juggernaut-XL-v9", torch_dtype=torch.float16, use_safetensors=True, variant="fp16")
 pipe.to("cuda")
 
-prompt = "A starry night merging seamlessly into a blossoming cherry tree."
+prompt = "Through a kaleidoscopic lens, a happy human aboard a spaceship raises a glistening chalice, its contents reflecting a myriad of colors from the cosmic surroundings."
 
 
 
